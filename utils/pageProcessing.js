@@ -9,7 +9,7 @@ exports.processProductPage = async function (page, url) {
       )?.textContent;
       let price = document.querySelector(`._30jeq3._16Jk6d`)?.textContent;
 
-      price = Number(price?.slice(1, price?.length));
+      price = Number(price?.slice(1, price?.length).replace(",", ""));
       const avaliable =
         document.querySelector(`button._2Dfasx`)?.textContent?.toLowerCase() ===
         "notify me"
@@ -18,13 +18,25 @@ exports.processProductPage = async function (page, url) {
 
       const rating = Number(document.querySelector("._3LWZlK")?.textContent);
       const img = document.querySelector(`._2r_T1I`)?.src;
-      const noRatings = document.querySelector("._2_R_DZ")?.textContent;
+      const noRatings = Number(
+        document
+          .querySelector("._2_R_DZ")
+          ?.textContent?.split(" ")?.[0]
+          .replace(",", "")
+      );
 
+      const noReviews = Number(
+        document
+          .querySelector("._2_R_DZ")
+          ?.textContent?.split(" ")?.[3]
+          .replace(",", "")
+      );
       return {
         title,
         price,
         rating,
         noRatings,
+        noReviews,
         url,
         img,
         avaliable,
