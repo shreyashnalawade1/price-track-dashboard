@@ -1,6 +1,6 @@
 const puppeteer = require("puppeteer");
 //process single page
-exports.processProductPage = async function (page, url) {
+exports.processProductPage = async function (page, url, context) {
   try {
     await page.goto(url);
     const InfoObject = await page.evaluate((url) => {
@@ -44,12 +44,12 @@ exports.processProductPage = async function (page, url) {
     }, url);
     return InfoObject;
   } catch (err) {
-    console.log(err);
+    context.log(err);
   }
 };
 
 // process a search page with all products on it
-exports.processSearchPage = async function (page) {
+exports.processSearchPage = async function (page, context) {
   try {
     const urls = await page.evaluate(() => {
       const linkTags = document.querySelectorAll("._1AtVbE ._13oc-S a[title]");
@@ -62,20 +62,20 @@ exports.processSearchPage = async function (page) {
     const productData = [];
     for (const url of urls) {
       try {
-        const InfoObject = await exports.processProductPage(page, url);
-        console.log(InfoObject);
+        const InfoObject = await exports.processProductPage(page, url, context);
+        context.log(InfoObject);
         productData.push(InfoObject);
       } catch (err) {
-        console.log(err);
+        context.log(err);
       }
     }
     return productData;
   } catch (err) {
-    console.log(err);
+    context.log(err);
   }
 };
 //main function
-exports.main = async function (term) {
+exports.main = async function (term, context) {
   // Launch the browser and open a new blank page
   try {
     const browser = await puppeteer.launch({
@@ -93,7 +93,7 @@ exports.main = async function (term) {
     const data = [];
     while (true) {
       try {
-        const processedInfo = await exports.processSearchPage(page);
+        const processedInfo = await exports.processSearchPage(page, context);
         data.concat(processedInfo);
         const nextUrl = await page.evaluate(() => {
           const Elements = document.querySelectorAll("._1LKTO3");
@@ -110,10 +110,10 @@ exports.main = async function (term) {
           break;
         }
       } catch (err) {
-        console.log(err);
+        context.log(err);
       }
     }
   } catch (err) {
-    console.log(err);
+    context.log(err);
   }
 };
