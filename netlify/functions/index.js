@@ -9,6 +9,7 @@ exports.handler = async () => {
   //     await main(searchTerm);
   //   }
   // })();
+  console.log("requrest recived");
   return {
     statusCode: 200,
     body: "Hello, World!",
