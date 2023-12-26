@@ -1,6 +1,7 @@
 const puppeteer = require("puppeteer");
+const path = require("path");
 //process single page
-exports.processProductPage = async function (page, url, context) {
+exports.processProductPage = async function (page, url) {
   try {
     await page.goto(url);
     const InfoObject = await page.evaluate((url) => {
@@ -44,12 +45,12 @@ exports.processProductPage = async function (page, url, context) {
     }, url);
     return InfoObject;
   } catch (err) {
-    context.log(err);
+    console.log(err);
   }
 };
 
 // process a search page with all products on it
-exports.processSearchPage = async function (page, context) {
+exports.processSearchPage = async function (page) {
   try {
     const urls = await page.evaluate(() => {
       const linkTags = document.querySelectorAll("._1AtVbE ._13oc-S a[title]");
@@ -62,26 +63,30 @@ exports.processSearchPage = async function (page, context) {
     const productData = [];
     for (const url of urls) {
       try {
-        const InfoObject = await exports.processProductPage(page, url, context);
-        context.log(InfoObject);
+        const InfoObject = await exports.processProductPage(page, url);
+        console.log(InfoObject);
         productData.push(InfoObject);
       } catch (err) {
-        context.log(err);
+        console.log(err);
       }
     }
     return productData;
   } catch (err) {
-    context.log(err);
+    console.log(err);
   }
 };
 //main function
-exports.main = async function (term, context) {
+exports.main = async function (term) {
   // Launch the browser and open a new blank page
+  const excePath = path.join(
+    __dirname,
+    ".././netlify/functions/.cache/puppeteer/chrome/win64-119.0.6045.105/chrome-win64/chrome.exe"
+  );
   try {
     const browser = await puppeteer.launch({
-      headless: false,
-      defaultViewport: false,
+      headless: "new",
       userDataDir: "./temp",
+      executablePath: excePath,
     });
     const page = await browser.newPage();
     await page.goto("https://www.flipkart.com/");
@@ -93,7 +98,7 @@ exports.main = async function (term, context) {
     const data = [];
     while (true) {
       try {
-        const processedInfo = await exports.processSearchPage(page, context);
+        const processedInfo = await exports.processSearchPage(page);
         data.concat(processedInfo);
         const nextUrl = await page.evaluate(() => {
           const Elements = document.querySelectorAll("._1LKTO3");
@@ -110,10 +115,10 @@ exports.main = async function (term, context) {
           break;
         }
       } catch (err) {
-        context.log(err);
+        console.log(err);
       }
     }
   } catch (err) {
-    context.log(err);
+    console.log(err);
   }
 };

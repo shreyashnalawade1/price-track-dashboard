@@ -1,5 +1,5 @@
-const { readSearchTerms } = require("./utils/fileProcessing");
-const { main } = require("./utils/pageProcessing");
+const { readSearchTerms } = require("../../utils/fileProcessing");
+const { main } = require("../../utils/pageProcessing");
 
 (async () => {
   const searchTerms = readSearchTerms();
