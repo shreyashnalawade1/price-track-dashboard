@@ -80,12 +80,12 @@ exports.main = async function (term) {
   // Launch the browser and open a new blank page
   const excePath = path.join(
     __dirname,
-    ".././netlify/functions/.cache/puppeteer/chrome/win64-119.0.6045.105/chrome-win64/chrome.exe"
+    "../.cache/puppeteer/chrome/win64-119.0.6045.105/chrome-win64/chrome.exe"
   );
   try {
     const browser = await puppeteer.launch({
       headless: "new",
-      userDataDir: "./temp",
+      userDataDir: "../temp",
       executablePath: excePath,
     });
     const page = await browser.newPage();
