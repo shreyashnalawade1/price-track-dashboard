@@ -10,7 +10,15 @@ exports.handler = async () => {
   //     await main(searchTerm);
   //   }
   // })();
-  const browser = await puppeteer.launch();
+  const excePath = path.join(
+    __dirname +
+      "../../.cache/puppeteer/chrome/win64-119.0.6045.105/chrome-win64/chrome.exe"
+  );
+  const userPath = path.join(__dirname, "../../temp");
+  const browser = await puppeteer.launch({
+    executablePath: excePath,
+    userDataDir: userPath,
+  });
 
   const page = await browser.newPage();
   await page.goto(
